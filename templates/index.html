@@ -70,7 +70,11 @@
     <hr style="margin-bottom: 2em; margin-top: 0px;">
 
     <!-- The stream -->
-    <img id="stream" class="img-rounded" src="/stream.mjpg" onerror="this.src='https://cdn.discordapp.com/attachments/376963150949646337/462706189193576448/2120x920_MS-RedSunset.png'">
+    <img id="stream" class="img-rounded" src="/stream.mjpg" onerror="this.src='../static/tesla.jpg'">
+
+    <h4 id="connected" v-bind:style="{ color: statusColor}">
+            {{state}}
+    </h4>
 
     <!-- WASD keys -->
     <table id="keyTable">
@@ -95,6 +99,21 @@
     </table>
 
     <script>
+    var connected = new Vue({
+        el: '#connected',
+        data: {
+            status: false
+        },
+        computed: {
+            state: function () {
+                return this.status ? "Connected" : "Not connected";
+            },
+            statusColor: function () {
+                return this.status ? "green" : "red";
+            }
+        }
+    });
+
     var keys = {};
     keys[87] = "W";
     keys[65] = "A";
@@ -106,6 +125,12 @@
     pressed[65] = false;
     pressed[83] = false;
     pressed[68] = false;
+
+    var mousePressed = {};
+    mousePressed[87] = false;
+    mousePressed[65] = false;
+    mousePressed[83] = false;
+    mousePressed[68] = false;
 
     $(document).ready(function() {
         $(document).keydown(function(event) {
@@ -122,10 +147,51 @@
                 pressed[event.which] = false;
             }
         });
+        for (var property in keys) {
+            if (keys.hasOwnProperty(property)) {
+                $(`#${keys[property]}Button`).mousedown(function() {
+                    mousePressed[property] = true;
+                });
+            }
+        }
+        $(document).mouseup(function() {
+            for (var property in keys) {
+                if (keys.hasOwnProperty(property)) {
+                    mousePressed[property] = false;
+                }
+            }
+        });
     });
 
-    // constantly ping the server with state
+    function getInput()
+    {
+        var input = {};
+        for (var property in keys) {
+            if (keys.hasOwnProperty(property)) {
+                input[property] = pressed[property] || mousePressed[property];
+            }
+        }
+        return input;
+    }
 
+    // constantly ping the server with state
+    function pollServer()
+    {
+        $.ajax({
+            url: "/fuck",
+            method: "POST",
+            data: getInput(),
+            success: function(data) {
+                connected.status = data;
+                setTimeout(pollServer, 33);
+            },
+            error: function() {
+                connected.status = false;
+                setTimeout(pollServer, 33);
+            },
+        });
+    }
+    pollServer();
 
     </script>
 </body>
