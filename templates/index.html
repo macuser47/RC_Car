@@ -66,16 +66,19 @@
 </head>
 
 <body>
+    <!-- Polite greeting -->
     <h1>Welcome to shitland.</h1>
     <hr style="margin-bottom: 2em; margin-top: 0px;">
 
     <!-- The stream -->
     <img id="stream" class="img-rounded" src="/stream.mjpg" onerror="this.src='../static/tesla.jpg'">
 
+    <!-- Connection state display -->
     <h4 id="connected" v-bind:style="{ color: statusColor}">
             {{state}}
     </h4>
     <hr>
+    <!-- Authentication key input -->
     <input id="carKey" class="form-control" v-model="key" type="text" placeholder="Car Key">
     <hr>
 
@@ -102,6 +105,7 @@
     </table>
 
     <script>
+    // displays the connection state to the car
     var connected = new Vue({
         el: '#connected',
         data: {
@@ -117,6 +121,7 @@
             }
         }
     });
+    // gets the car key textbox data
     var carKey = new Vue({
         el: '#carKey',
         data: {
@@ -124,25 +129,32 @@
         }
     });
 
+    // maps keycodes to keys
     var keys = {};
     keys[87] = "W";
     keys[65] = "A";
     keys[83] = "S";
     keys[68] = "D";
 
+    // makes sure keydown only is called once per WASD key press
+    // also keeps track of what keys are pressed down
     var pressed = {};
     pressed[87] = false;
     pressed[65] = false;
     pressed[83] = false;
     pressed[68] = false;
 
+    // makes sure mousedown only is called once per click of onscreen WASD buttons
+    // also keeps track of what key buttons are pressed down
     var mousePressed = {};
     mousePressed[87] = false;
     mousePressed[65] = false;
     mousePressed[83] = false;
     mousePressed[68] = false;
 
+    // jquery bindings
     $(document).ready(function() {
+        // WASD press and release
         $(document).keydown(function(event) {
             if (event.which in keys && !pressed[event.which])
             {
@@ -157,6 +169,7 @@
                 pressed[event.which] = false;
             }
         });
+        // WASD onscreen button press and release
         for (var property in keys) {
             if (keys.hasOwnProperty(property)) {
                 $(`#${keys[property]}Button`).mousedown(function() {
@@ -173,6 +186,7 @@
         });
     });
 
+    // uses value of carKey textbox, pressed and mousePressed to generate data to send to server
     function getInput()
     {
         var input = {key: carKey.key};
