@@ -7,7 +7,7 @@ from threading import Thread
 
 CLIENT_IP = sys.argv[1]
 TARGET_PORT = 6624 #FRC 6624 ftw
-BUFFER_SIZE = 1024
+BUFFER_SIZE = 512
 
 sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
