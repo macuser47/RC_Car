@@ -28,7 +28,7 @@ def update_input():
         return "They key don't fit pardner"
     
     input = request.json
-    return str(0x00) if timed_out() else str(0x01)
+    return "False" if timed_out() else "True"
 
 @app.route("/get_input", methods=["GET"])
 def get_input():
