@@ -1,0 +1,132 @@
+<!doctype html>
+
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+        
+    <title>IF you're using IE please fuck off</title>
+    <meta name="description" content="Please kill me">
+    <meta name="author" content="A total failure">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- jquery -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+
+    <!-- bootstrap -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+
+    <!-- vue -->
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+
+    <!-- 3D buttons -->
+    <link rel="stylesheet" href="../static/buttons.css"/>
+
+    <style>
+        #stream
+        {
+            min-width: 100px;
+            width: 100%;
+            min-height: 100px;
+            height: 20em;
+        }
+        #keyTable
+        {
+            margin-top: 2em;
+            min-width: 100px;
+            width: 100%;
+            min-height: 100px;
+            height: 10em;
+        }
+        .keyButton
+        {
+            min-width: 100px;
+            width: 100%;
+            min-height: 100px;
+            height: 1em;
+        }
+        td
+        {
+            padding: 0.3em;
+        }
+        body
+        {
+            margin:40px auto;
+            max-width:650px;
+            line-height:1.6;
+            font-size:18px;
+            color:#444;
+            padding:0 10px
+        }
+        h1,h2,h3
+        {
+            line-height:1.2
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Welcome to shitland.</h1>
+    <hr style="margin-bottom: 2em; margin-top: 0px;">
+
+    <!-- The stream -->
+    <img id="stream" class="img-rounded" src="/stream.mjpg" onerror="this.src='https://cdn.discordapp.com/attachments/376963150949646337/462706189193576448/2120x920_MS-RedSunset.png'">
+
+    <!-- WASD keys -->
+    <table id="keyTable">
+    <tr>
+        <td></td>
+        <td>
+            <button id="WButton" type="button" class="btn btn-default btn-lg keyButton">W</button>
+        </td>
+        <td></td>
+    </tr>
+    <tr>
+        <td>
+            <button id="AButton" type="button" class="btn btn-default btn-lg keyButton">A</button>
+        </td>
+        <td>
+            <button id="SButton" type="button" class="btn btn-default btn-lg keyButton">S</button>
+        </td>
+        <td>
+            <button id="DButton" type="button" class="btn btn-default btn-lg keyButton">D</button>
+        </td>
+    </tr>
+    </table>
+
+    <script>
+    var keys = {};
+    keys[87] = "W";
+    keys[65] = "A";
+    keys[83] = "S";
+    keys[68] = "D";
+
+    var pressed = {};
+    pressed[87] = false;
+    pressed[65] = false;
+    pressed[83] = false;
+    pressed[68] = false;
+
+    $(document).ready(function() {
+        $(document).keydown(function(event) {
+            if (event.which in keys && !pressed[event.which])
+            {
+                $(`#${keys[event.which]}Button`).addClass("active");
+                pressed[event.which] = true;
+            }
+        });
+        $(document).keyup(function(event) {
+            if (event.which in keys)
+            {
+                $(`#${keys[event.which]}Button`).removeClass("active");
+                pressed[event.which] = false;
+            }
+        });
+    });
+
+    // constantly ping the server with state
+
+
+    </script>
+</body>
+</html>
