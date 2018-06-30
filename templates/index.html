@@ -75,6 +75,9 @@
     <h4 id="connected" v-bind:style="{ color: statusColor}">
             {{state}}
     </h4>
+    <hr>
+    <input id="carKey" class="form-control" v-model="key" type="text" placeholder="Car Key">
+    <hr>
 
     <!-- WASD keys -->
     <table id="keyTable">
@@ -102,15 +105,22 @@
     var connected = new Vue({
         el: '#connected',
         data: {
-            status: false
+            status: false,
+            authenticated: false
         },
         computed: {
             state: function () {
-                return this.status ? "Connected" : "Not connected";
+                return this.authenticated ? (this.status ? "Connected" : "Not connected") : "Not authenticated";
             },
             statusColor: function () {
-                return this.status ? "green" : "red";
+                return this.status  && this.authenticated ? "green" : "red";
             }
+        }
+    });
+    var carKey = new Vue({
+        el: '#carKey',
+        data: {
+            key: ""
         }
     });
 
@@ -165,10 +175,10 @@
 
     function getInput()
     {
-        var input = {};
+        var input = {key: carKey.key};
         for (var property in keys) {
             if (keys.hasOwnProperty(property)) {
-                input[property] = pressed[property] || mousePressed[property];
+                input[keys[property]] = pressed[property] || mousePressed[property];
             }
         }
         return input;
@@ -182,6 +192,7 @@
             method: "POST",
             data: getInput(),
             success: function(data) {
+                connected.authenticated = data !== "They key don't fit pardner";
                 connected.status = data;
                 setTimeout(pollServer, 33);
             },
