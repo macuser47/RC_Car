@@ -36,6 +36,7 @@ def get_input():
 
 @app.route("/mjpg", methods=["POST"])
 def update_stream():
+    global mjpg
     if not request.method == "POST":
         return "FUCC YE"
     mjpg = request.get_data()
@@ -69,4 +70,4 @@ def generate_stream():
         time.sleep(1 / float(STREAM_FRAMERATE))
 
 if __name__ == "__main__":
-    app.run()
+    app.run(host="0.0.0.0", threaded=True)
