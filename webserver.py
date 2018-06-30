@@ -9,7 +9,7 @@ last_car_time = time.time()
 dc_timeout = 0.25
 STREAM_FRAMERATE = 30
 
-with open("tesla.jpg", "rb") as f:
+with open("static/tesla.jpg", "rb") as f:
     mjpg = f.read()
 
 with open("car.key") as f:
