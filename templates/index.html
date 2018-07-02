@@ -204,6 +204,7 @@
         $.ajax({
             url: "/fuck",
             method: "POST",
+            dataType: "json",
             data: getInput(),
             success: function(data) {
                 connected.authenticated = data !== "They key don't fit pardner";
