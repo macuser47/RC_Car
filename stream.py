@@ -18,7 +18,7 @@ start = time.time()
 def read():
     return cam.read()[1]
 
-def process():
+def process(img):
     manager = Manager()
     d = manager.list(range(1))
     proc = Process(target=encode, args=(img, d))
@@ -45,7 +45,7 @@ while True:
 
     img = read()
 
-    t = Thread(target=process)
+    t = Thread(target=process, args=(img,))
     t.daemon = True
     t.start()
 
