@@ -2,10 +2,10 @@ import cv2
 import time
 import requests
 from threading import Thread
-from multiprocessing import Process
+from multiprocessing import Process, Manager
 import sys
 
-cam = cv2.VideoCapture(1)
+cam = cv2.VideoCapture(0)
 ret, frame = cam.read()
 
 time.sleep(0.5)
@@ -18,8 +18,21 @@ start = time.time()
 def read():
     return cam.read()[1]
 
-def encode(img):
-    encoded_image = cv2.imencode(".jpg", current_frame)[1].tostring()
+def process():
+    manager = Manager()
+    d = manager.list()
+    proc = Process(target=encode, args=(img, d))
+    proc.daemon = True
+    proc.start()
+    proc.join()
+    encoded_image = d[0]
+
+    t = Thread(target=process, args=(encoded_image,))
+    t.daemon = True
+    t.start()
+
+def encode(img, d):
+    d[0] = cv2.imencode(".jpg", current_frame)[1].tostring()
 
 
 def post(img):
@@ -29,17 +42,10 @@ def post(img):
 
 while True:
     start = time.time()
+
     img = read()
-    encoded_image = None
-    proc = Process(target=encode, args=(img,))
-    proc.daemon = True
-    proc.start()
-    proc.join()
 
-    if encoded_image == None:
-        raise Exception("Image not encoded")
-
-    t = Thread(target=post, args=(encoded_image,))
+    t = Thread(target=process, args=(encoded_image,))
     t.daemon = True
     t.start()
 
