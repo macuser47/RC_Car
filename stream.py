@@ -27,7 +27,7 @@ def process():
     proc.join()
     encoded_image = d[0]
 
-    t = Thread(target=process, args=(encoded_image,))
+    t = Thread(target=post, args=(encoded_image,))
     t.daemon = True
     t.start()
 
