@@ -20,7 +20,7 @@ def read():
 
 def process():
     manager = Manager()
-    d = manager.list()
+    d = manager.list(range(1))
     proc = Process(target=encode, args=(img, d))
     proc.daemon = True
     proc.start()
