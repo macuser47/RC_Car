@@ -45,7 +45,7 @@ while True:
 
     img = read()
 
-    t = Thread(target=process, args=(encoded_image,))
+    t = Thread(target=process)
     t.daemon = True
     t.start()
 
