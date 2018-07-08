@@ -1,18 +1,24 @@
-
 import socket
 import json
 import keyboard
 
- 
+def getIP():
+    s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    s.connect(("8.8.8.8", 80))
+    ip = (s.getsockname()[0])
+    s.close()
+    return ip
+
 #TCP_IP = '127.0.0.1'
 TCP_PORT = 6624
 BUFFER_SIZE = 512
+IP = getIP()
 
 #magic socket stuff
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-s.bind((socket.gethostname(), TCP_PORT))
+s.bind((IP, TCP_PORT))
 s.listen(1)
- 
+print("Waiting for connection...")
 conn, addr = s.accept()
 
 print('Connection address:', addr)
