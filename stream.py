@@ -13,7 +13,7 @@ time.sleep(0.5)
 def read():
     return cam.read()[1]
 
-def process(img):
+def process(img, time):
     manager = Manager()
     d = manager.list(range(1))
     proc = Process(target=encode, args=(img, d))
@@ -22,7 +22,7 @@ def process(img):
     proc.join()
     encoded_image = d[0]
 
-    t = Thread(target=post, args=(encoded_image,))
+    t = Thread(target=post, args=(encoded_image, time))
     t.daemon = True
     t.start()
 
@@ -30,8 +30,8 @@ def encode(img, d):
     d[0] = cv2.imencode(".jpg", img)[1].tostring()
 
 
-def post(img):
-    requests.post("http://" + sys.argv[1] + "/mjpg", data=img)
+def post(img, time):
+    requests.post("http://" + sys.argv[1] + "/mjpg", data=img, headers={"timestamp": str(time)})
         #time.sleep(1.0 / 30)
 
 
@@ -40,7 +40,7 @@ while True:
 
     img = read()
 
-    t = Thread(target=process, args=(img,))
+    t = Thread(target=process, args=(img, start))
     t.daemon = True
     t.start()
 
