@@ -40,8 +40,13 @@ def update_motor_controller():
     pass
 
 def get_input():
-    r = requests.get('http://192.168.1.11/get_input')
-    print(r.json())
+    try:
+        r = requests.get('http://192.168.1.11/get_input')
+        print(r.json())
+    except Exception as e:
+        print(e)
+
+    
 
 
     # except (socket.timeout, socket.error):
