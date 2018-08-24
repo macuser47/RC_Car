@@ -33,7 +33,7 @@ def main():
             print("Keyboard interrupt detected: resetting GPIO and exiting...")
             resetGPIOPins([PIN_LEFT, PIN_RIGHT, PIN_FORWARD, PIN_BACKWARD])
             GPIO.cleanup()
-            exit()
+            # exit()
 
 def update_motor_controller(json_data):
     dict = json.loads(json_data)
