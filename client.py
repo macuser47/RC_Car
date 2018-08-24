@@ -60,8 +60,9 @@ def update_motor_controller(json_data):
             turnRight()
         else:
             resetGPIOPins([PIN_RIGHT])
-    except:
+    except Exception as e:
         print("server offline?")
+        print(e)
 
 def get_input():
     try:
