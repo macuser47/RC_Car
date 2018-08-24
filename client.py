@@ -4,6 +4,7 @@ import sys
 import json
 import time
 from threading import Thread
+import request
 
 CLIENT_IP = sys.argv[1]
 TARGET_PORT = 6624 #FRC 6624 ftw
@@ -24,61 +25,70 @@ startTime = time.time()
 def main():
     try:
         setupGPIO()
-        sendIPPacket()
-        listenForPackets()
+        #sendIPPacket()
+        #listenForPackets()
     except KeyboardInterrupt():
         print("Keyboard interrupt detected: resetting GPIO and exiting...")
         resetGPIOPins([PIN_LEFT, PIN_RIGHT, PIN_FORWARD, PIN_BACKWARD])
         GPIO.cleanup()
         exit()
-    except (socket.timeout, socket.error):
-        #print "Socket timed out: resetting GPIO and exiting..."
-        #resetGPIOPins([PIN_LEFT, PIN_RIGHT, PIN_FORWARD, PIN_BACKWARD])
-        #GPIO.cleanup()
-        #exit()
-        print("Disconect between client and server. Retrying in 5 seconds.")
-        time.sleep(5)
-        main()
 
 
-def sendIPPacket():
 
-    sock.connect((CLIENT_IP, TARGET_PORT))
-    sock.send("CONNECT")
+def update_motor_controller():
+    pass
 
-
-def listenForPackets():
-    try:
-        while True:
-            data = sock.recv(1024)
-
-            dict = json.loads(data)
-
-            if dict["W"]:
-                driveForward()
-            else:
-                resetGPIOPins([PIN_FORWARD])
-
-            if dict["A"]:
-                turnLeft()
-            else:
-                resetGPIOPins([PIN_LEFT])
+def get_input():
+    r = requests.get('192.168.1.11/get_input')
+    print(r.json())
 
 
-            if dict["S"]:
-                driveBackward()
-            else:
-                resetGPIOPins([PIN_BACKWARD])
+    # except (socket.timeout, socket.error):
+    #     #print "Socket timed out: resetting GPIO and exiting..."
+    #     #resetGPIOPins([PIN_LEFT, PIN_RIGHT, PIN_FORWARD, PIN_BACKWARD])
+    #     #GPIO.cleanup()
+    #     #exit()
+    #     print("Disconect between client and server. Retrying in 5 seconds.")
+    #     time.sleep(5)
+    #     main()
+
+# def sendIPPacket():
+
+#     sock.connect((CLIENT_IP, TARGET_PORT))
+#     sock.send("CONNECT")
+
+# def listenForPackets():
+#     try:
+#         while True:
+#             data = sock.recv(1024)
+
+#             dict = json.loads(data)
+
+#             if dict["W"]:
+#                 driveForward()
+#             else:
+#                 resetGPIOPins([PIN_FORWARD])
+
+#             if dict["A"]:
+#                 turnLeft()
+#             else:
+#                 resetGPIOPins([PIN_LEFT])
 
 
-            if dict["D"]:
-                turnRight()
-            else:
-                resetGPIOPins([PIN_RIGHT])
+#             if dict["S"]:
+#                 driveBackward()
+#             else:
+#                 resetGPIOPins([PIN_BACKWARD])
 
-            sock.send('OK') #echo for confirmation
-    except (socket.timeout, socket.error):
-        main()
+
+#             if dict["D"]:
+#                 turnRight()
+#             else:
+#                 resetGPIOPins([PIN_RIGHT])
+
+#             sock.send('OK') #echo for confirmation
+#     except (socket.timeout, socket.error):
+#         main()
 
 def turnLeft():
     resetGPIOPins([PIN_RIGHT])
@@ -101,8 +111,6 @@ def setupGPIO():
     GPIO.setmode(GPIO.BOARD)
     for pin in [PIN_FORWARD, PIN_BACKWARD, PIN_RIGHT, PIN_LEFT]:
         GPIO.setup(pin, GPIO.OUT)
-
-
 
 def resetGPIOPins(pins):
     for pin in pins:
