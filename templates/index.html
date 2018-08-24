@@ -206,7 +206,7 @@
             method: "POST",
             dataType: "json",
             contentType: "application/json",
-            data: getInput(),
+            data: JSON.stringify(getInput()),
             success: function(data) {
                 connected.authenticated = data !== "They key don't fit pardner";
                 connected.status = data;
