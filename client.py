@@ -1,15 +1,11 @@
-import socket
 import RPi.GPIO as GPIO
 import sys
 import json
 import time
 from threading import Thread
+import requests
 
 CLIENT_IP = sys.argv[1]
-TARGET_PORT = 6624 #FRC 6624 ftw
-BUFFER_SIZE = 1024
-
-sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
 PIN_FORWARD = 37
 PIN_BACKWARD = 35
@@ -18,72 +14,66 @@ PIN_RIGHT = 31
 
 currentTime = time.time()
 previousTime = time.time()
-
 startTime = time.time()
 
 def main():
+
+    #setup gpio
     try:
-        setupGPIO()
-        sendIPPacket()
-        listenForPackets()
-    except KeyboardInterrupt():
-        print("Keyboard interrupt detected: resetting GPIO and exiting...")
-        resetGPIOPins([PIN_LEFT, PIN_RIGHT, PIN_FORWARD, PIN_BACKWARD])
-        GPIO.cleanup()
-        exit()
-    except (socket.timeout, socket.error):
-        #print "Socket timed out: resetting GPIO and exiting..."
-        #resetGPIOPins([PIN_LEFT, PIN_RIGHT, PIN_FORWARD, PIN_BACKWARD])
         #GPIO.cleanup()
-        #exit()
-        print("Disconect between client and server. Retrying in 5 seconds.")
-        time.sleep(5)
-        main()
+        setupGPIO()
+    except Exception as e:
+        print(e)
 
+    while 1:
+        try:
+            user_input = get_input()
+            update_motor_controller(user_input)
+        except KeyboardInterrupt:
 
-def sendIPPacket():
+            print("Keyboard interrupt detected: resetting GPIO and exiting...")
+            resetGPIOPins([PIN_LEFT, PIN_RIGHT, PIN_FORWARD, PIN_BACKWARD])
+            GPIO.cleanup()
+            # exit()
+        
 
-    sock.connect((CLIENT_IP, TARGET_PORT))
-    sock.send("CONNECT")
+def update_motor_controller(json_data):
 
-
-def listenForPackets():
     try:
-        while True:
-            data = sock.recv(1024)
+        print(json_data)
+        if json_data["W"]:
+            driveForward()
+        else:
+            resetGPIOPins([PIN_FORWARD])
 
-            dict = json.loads(data)
+        if json_data["A"]:
+            turnLeft()
+        else:
+            resetGPIOPins([PIN_LEFT])
 
-            if dict["W"]:
-                driveForward()
-            else:
-                resetGPIOPins([PIN_FORWARD])
+        if json_data["S"]:
+            driveBackward()
+        else:
+            resetGPIOPins([PIN_BACKWARD])
 
-            if dict["A"]:
-                turnLeft()
-            else:
-                resetGPIOPins([PIN_LEFT])
+        if json_data["D"]:
+            turnRight()
+        else:
+            resetGPIOPins([PIN_RIGHT])
+    except Exception as e:
+        print("server offline?")
+        print(e)
 
-
-            if dict["S"]:
-                driveBackward()
-            else:
-                resetGPIOPins([PIN_BACKWARD])
-
-
-            if dict["D"]:
-                turnRight()
-            else:
-                resetGPIOPins([PIN_RIGHT])
-
-            sock.send('OK') #echo for confirmation
-    except (socket.timeout, socket.error):
-        main()
+def get_input():
+    try:
+        r = requests.get('http://192.168.1.11:5000/get_input')
+        return r.json()
+    except Exception as e:
+        print(e)
 
 def turnLeft():
     resetGPIOPins([PIN_RIGHT])
     GPIO.output(PIN_LEFT, GPIO.HIGH)
-
 
 def turnRight():
     resetGPIOPins([PIN_LEFT])
@@ -101,8 +91,6 @@ def setupGPIO():
     GPIO.setmode(GPIO.BOARD)
     for pin in [PIN_FORWARD, PIN_BACKWARD, PIN_RIGHT, PIN_LEFT]:
         GPIO.setup(pin, GPIO.OUT)
-
-
 
 def resetGPIOPins(pins):
     for pin in pins:
