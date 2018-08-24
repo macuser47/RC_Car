@@ -4,7 +4,7 @@ import sys
 import json
 import time
 from threading import Thread
-import request
+import requests
 
 CLIENT_IP = sys.argv[1]
 TARGET_PORT = 6624 #FRC 6624 ftw
