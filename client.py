@@ -40,7 +40,7 @@ def update_motor_controller():
     pass
 
 def get_input():
-    r = requests.get('192.168.1.11/get_input')
+    r = requests.get('http://192.168.1.11/get_input')
     print(r.json())
 
 
