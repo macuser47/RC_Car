@@ -10,9 +10,6 @@ ret, frame = cam.read()
 
 time.sleep(0.5)
 
-def read():
-    return cam.read()[1]
-
 def process(img, time):
     manager = Manager()
     d = manager.list(range(1))
@@ -38,7 +35,10 @@ def post(img, time):
 while True:
     start = time.time()
 
-    img = read()
+    success, img = cam.read()
+    if not success:
+        print("Frame error")
+        continue
 
     t = Thread(target=process, args=(img, start))
     t.daemon = True
