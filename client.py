@@ -70,7 +70,6 @@ def get_input():
         return r.json()
     except Exception as e:
         print(e)
-        GPIO.cleanup()
 
 def turnLeft():
     resetGPIOPins([PIN_RIGHT])
