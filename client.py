@@ -41,7 +41,7 @@ def update_motor_controller():
 
 def get_input():
     try:
-        r = requests.get('http://192.168.1.11/get_input')
+        r = requests.get('http://192.168.1.11:5000/get_input')
         print(r.json())
     except Exception as e:
         print(e)
