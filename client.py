@@ -38,24 +38,23 @@ def main():
             # exit()
 
 def update_motor_controller(json_data):
-    dict = json.loads(json_data)
 
-    if dict["W"]:
+    if json_data["W"]:
         driveForward()
     else:
         resetGPIOPins([PIN_FORWARD])
 
-    if dict["A"]:
+    if json_data["A"]:
         turnLeft()
     else:
         resetGPIOPins([PIN_LEFT])
 
-    if dict["S"]:
+    if json_data["S"]:
         driveBackward()
     else:
         resetGPIOPins([PIN_BACKWARD])
 
-    if dict["D"]:
+    if json_data["D"]:
         turnRight()
     else:
         resetGPIOPins([PIN_RIGHT])
