@@ -35,29 +35,33 @@ def main():
             resetGPIOPins([PIN_LEFT, PIN_RIGHT, PIN_FORWARD, PIN_BACKWARD])
             GPIO.cleanup()
             # exit()
+        
 
 def update_motor_controller(json_data):
 
-    print(json_data)
-    if json_data["W"]:
-        driveForward()
-    else:
-        resetGPIOPins([PIN_FORWARD])
+    try:
+        print(json_data)
+        if json_data["W"]:
+            driveForward()
+        else:
+            resetGPIOPins([PIN_FORWARD])
 
-    if json_data["A"]:
-        turnLeft()
-    else:
-        resetGPIOPins([PIN_LEFT])
+        if json_data["A"]:
+            turnLeft()
+        else:
+            resetGPIOPins([PIN_LEFT])
 
-    if json_data["S"]:
-        driveBackward()
-    else:
-        resetGPIOPins([PIN_BACKWARD])
+        if json_data["S"]:
+            driveBackward()
+        else:
+            resetGPIOPins([PIN_BACKWARD])
 
-    if json_data["D"]:
-        turnRight()
-    else:
-        resetGPIOPins([PIN_RIGHT])
+        if json_data["D"]:
+            turnRight()
+        else:
+            resetGPIOPins([PIN_RIGHT])
+    except:
+        print("server offline?")
 
 def get_input():
     try:
