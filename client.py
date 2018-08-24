@@ -27,7 +27,7 @@ def main():
         sendIPPacket()
         listenForPackets()
     except KeyboardInterrupt():
-        print "Keyboard interrupt detected: resetting GPIO and exiting..."
+        print("Keyboard interrupt detected: resetting GPIO and exiting...")
         resetGPIOPins([PIN_LEFT, PIN_RIGHT, PIN_FORWARD, PIN_BACKWARD])
         GPIO.cleanup()
         exit()
@@ -36,46 +36,10 @@ def main():
         #resetGPIOPins([PIN_LEFT, PIN_RIGHT, PIN_FORWARD, PIN_BACKWARD])
         #GPIO.cleanup()
         #exit()
-        print "Oh fuck we DC'd immma do something in 5 seconds"
+        print("Oh fuck we DC'd immma do something in 5 seconds")
         time.sleep(5)
         main()
 
-# desync checking thread
-class DesyncCheck(Thread):
-    desync_timeout = 0.3
-    active = True
-    start_time = 0.0
-
-    desync = False
-    desync_time = 0.0
-
-    def __init__(self):
-        super(DesyncCheck, self).__init__()
-        self.daemon = True
-
-    def run(self):
-        self.start_time = time.time()
-        # keep updating while active
-        while self.active:
-            time.sleep(0.01)
-            self.update()
-
-    def stop(self):
-        if self.desync:
-            self.desync_time = time.time() - self.start_time - self.desync_timeout
-        self.active = False
-
-    def update(self):
-        # do nothing if not active
-        if not self.active:
-            return
-        # if timed out, then we desync'd
-        if time.time() - self.start_time > self.desync_timeout:
-            # stop the car
-            resetGPIOPins([PIN_LEFT, PIN_RIGHT, PIN_FORWARD, PIN_BACKWARD])
-            # we desync'd
-            self.desync = True
-            self.stop()
 
 def sendIPPacket():
     ip = getIP()
@@ -87,16 +51,7 @@ def sendIPPacket():
 def listenForPackets():
     try:
         while True:
-
-            desync_checker = DesyncCheck()
-            desync_checker.start()
             data = sock.recv(1024)
-
-            desync_checker.stop()
-            if desync_checker.desync:
-                print 'We desyncd for', desync_checker.desync_time, 'seconds.'
-                sock.send(str(desync_checker.desync_time))
-                continue
 
             dict = json.loads(data)
 
