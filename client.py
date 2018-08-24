@@ -25,6 +25,7 @@ startTime = time.time()
 def main():
     try:
         setupGPIO()
+        get_input()
         #sendIPPacket()
         #listenForPackets()
     except KeyboardInterrupt():
