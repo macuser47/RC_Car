@@ -36,13 +36,12 @@ def main():
         #resetGPIOPins([PIN_LEFT, PIN_RIGHT, PIN_FORWARD, PIN_BACKWARD])
         #GPIO.cleanup()
         #exit()
-        print("Oh fuck we DC'd immma do something in 5 seconds")
+        print("Disconect between client and server. Retrying in 5 seconds.")
         time.sleep(5)
         main()
 
 
 def sendIPPacket():
-    ip = getIP()
 
     sock.connect((CLIENT_IP, TARGET_PORT))
     sock.send("CONNECT")
@@ -108,16 +107,6 @@ def setupGPIO():
 def resetGPIOPins(pins):
     for pin in pins:
         GPIO.output(pin, GPIO.LOW)
-
-
-
-def getIP():
-    s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM);
-    s.connect(("8.8.8.8", 80));
-    ip = (s.getsockname()[0]);
-    s.close();
-
-    return ip;
 
 if __name__ == "__main__":
     main()
