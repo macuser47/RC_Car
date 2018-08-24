@@ -18,7 +18,7 @@ while True:
         print("FRAME READ FAILURE")
         continue
     mjpg = cv2.imencode(".jpg", frame)[1].tostring()
-    requests.post("http://" + sys.argv[1] + "/mjpg", data=mjpg, headers={"timestamp": str(time)})
+    requests.post("http://" + sys.argv[1] + "/mjpg", data=mjpg, headers={"timestamp": str(start)})
 
     if (time.time() - start) != 0:
         fps = 1. / (time.time() - start)
