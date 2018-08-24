@@ -5,7 +5,12 @@ import sys
 
 app = Flask(__name__)
 
-input = {}
+input = {
+    "W" : False,
+    "A" : False,
+    "S" : False,
+    "D" : False
+}
 last_car_time = time.time()
 dc_timeout = 0.25
 STREAM_FRAMERATE = 30
