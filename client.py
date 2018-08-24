@@ -29,7 +29,7 @@ def main():
         try:
             user_input = get_input()
             update_motor_controller(user_input)
-        except KeyboardInterrupt():
+        except KeyboardInterrupt:
 
             print("Keyboard interrupt detected: resetting GPIO and exiting...")
             resetGPIOPins([PIN_LEFT, PIN_RIGHT, PIN_FORWARD, PIN_BACKWARD])
