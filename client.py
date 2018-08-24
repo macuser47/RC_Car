@@ -20,7 +20,7 @@ def main():
 
     #setup gpio
     try:
-        GPIO.cleanup()
+        #GPIO.cleanup()
         setupGPIO()
     except Exception as e:
         print(e)
